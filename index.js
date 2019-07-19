@@ -24,6 +24,7 @@ Cli.withStdinLines(async function(lines, newline) {
 
 function Context(context) {
 	let outputDirectory = "."
+	let currentRoot = "."
 	let currentAtlas = null
 
 	function WithAtlas(cmd) {
@@ -48,16 +49,20 @@ function Context(context) {
 
 	return {
 		out,
+		root,
 		atlas,
 		buildAtlas,
 		config: WithAtlas(config),
-		root: WithAtlas(NoAtlasPropertys(["root"], root)),
 		size: WithAtlas(NoAtlasPropertys(["width", "height"], size)),
 		put: WithAtlas(put)
 	}
 
 	async function out(outDir) {
 		outputDirectory =  outDir
+	}
+	
+	async function root(rootPath) {
+		currentRoot = rootPath
 	}
 
 	async function atlas(name) {
@@ -104,16 +109,11 @@ function Context(context) {
 		currentAtlas.height = height
 	}
 
-	async function root(rootPath) {
-		currentAtlas.root = rootPath
-	}
-
 	async function put(dir) {
-		const root = currentAtlas.root
 		const newImages = []
-		for (let f of Fs.readdirSync(Path.join(root, dir)).filter(isImage)) {
-			const fullName = Path.join(root, dir, f)
-			const relativeName = Path.relative(root, fullName)
+		for (let f of Fs.readdirSync(Path.join(currentRoot, dir)).filter(isImage)) {
+			const fullName = Path.join(currentRoot, dir, f)
+			const relativeName = Path.relative(currentRoot, fullName)
 			newImages.push({
 				name: relativeName,
 				path: fullName

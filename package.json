@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "Generate image sheet for Corona",
   "bin": "bin/corona-image-sheet",
+  "main": "index.js",
   "scripts": {},
   "repository": {
     "type": "git",
