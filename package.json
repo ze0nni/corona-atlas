@@ -1,0 +1,27 @@
+{
+  "name": "corona-image-sheet",
+  "version": "0.1.1",
+  "description": "Generate image sheet for Corona",
+  "bin": "bin/corona-image-sheet",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ze0nni/corona-image-sheet.git"
+  },
+  "keywords": [
+    "corona",
+    "imagesheet",
+    "texture",
+    "atlas"
+  ],
+  "author": "Onni",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ze0nni/corona-atlas/issues"
+  },
+  "homepage": "https://github.com/ze0nni/corona-image-sheet#readme",
+  "dependencies": {
+    "cli": "^1.0.1",
+    "maxrects-packer": "^2.4.4"
+  }
+}
