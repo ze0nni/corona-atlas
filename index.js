@@ -1,6 +1,6 @@
 const Cli = require('cli')
 const Fs = require('fs')
-const Path = require('path')
+const Path = require('path').posix
 
 const MaxRectsPacker = require("maxrects-packer").MaxRectsPacker
 
@@ -120,7 +120,7 @@ function Context(context) {
 		const newImages = []
 		for (let f of Fs.readdirSync(Path.join(currentRoot, dir)).filter(isImage)) {
 			const fullName = Path.join(currentRoot, dir, f)
-			const relativeName = Path.relative(currentRoot, fullName)
+			const relativeName = Path.normalize(Path.relative(currentRoot, fullName))
 			newImages.push({
 				name: relativeName,
 				path: fullName
