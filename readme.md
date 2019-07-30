@@ -48,6 +48,10 @@ And now you see `atlas.png` and `atlas.cfg` in directory
 
 ## out [output directory name]
 
+## root [rood directory]
+
+Set atlas root directory
+
 Set ouptup directory
 
 ## atlas [output atlas name]
@@ -62,10 +66,6 @@ Set atlas config name
 
 Set current atlas size
 
-## root [rood directory]
-
-Set current atlas root directory
-
 ## put [directory]
 
 Append to atlas images (png and jpg) from `${root_directory}/{directory}`
@@ -75,17 +75,16 @@ Append to atlas images (png and jpg) from `${root_directory}/{directory}`
 You can declare few atlases in one file like this
 
 	out atlases
+	root images
 
 	atlas characters.png
 	config characters.cfg
 	size 1024 1024
-	root images
 	put characters
 
 	atlas inventory.png
 	config inventory.cfg
 	size 512 512
-	root images
 	put food
 	put weapons
 	put hats
