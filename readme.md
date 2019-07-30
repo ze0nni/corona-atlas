@@ -75,7 +75,8 @@ Append to atlas images (png and jpg) from `${root_directory}/{directory}`
 You can declare few atlases in one file like this
 
 	out atlases
-	root images
+	root images # optional
+	scale 1 # optional
 
 	atlas characters.png
 	config characters.cfg
@@ -86,6 +87,7 @@ You can declare few atlases in one file like this
 	config inventory.cfg
 	size 512 512
 	put food
+	scale 0.5 # now weapons and hats with scale 0.5
 	put weapons
 	put hats
 

@@ -25,6 +25,7 @@ Cli.withStdinLines(async function(lines, newline) {
 function Context(context) {
 	let outputDirectory = "."
 	let currentRoot = "."
+	let currentScale = 1
 	let currentAtlas = null
 
 	function WithAtlas(cmd) {
@@ -50,6 +51,7 @@ function Context(context) {
 	return {
 		out,
 		root,
+		scale,
 		atlas,
 		buildAtlas,
 		config: WithAtlas(config),
@@ -109,6 +111,11 @@ function Context(context) {
 		currentRoot = rootPath
 	}
 
+	async function scale(value) {
+		currentScale = parseFloat(value)
+		if (0 == currentScale || isNaN(currentScale)) throw `incorrect scale ${value}`
+	}
+
 	async function put(dir) {
 		const newImages = []
 		for (let f of Fs.readdirSync(Path.join(currentRoot, dir)).filter(isImage)) {
@@ -123,8 +130,8 @@ function Context(context) {
 		const progress = cliProgress(context, newImages.length)
 		for (let image of newImages) {
 			const size = await getImageSize(context, image.path)
-			image.width = size.width
-			image.height = size.height
+			image.width = size.width * currentScale
+			image.height = size.height * currentScale
 			progress()
 		}
 		currentAtlas.images = [...currentAtlas.images, ...newImages]
