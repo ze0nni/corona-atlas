@@ -70,6 +70,13 @@ Set current atlas size
 
 Append to atlas images (png and jpg) from `${root_directory}/{directory}`
 
+## fit [width] [height] [prefix]
+
+After put you can call fit to resize added images:
+
+    put ui/font
+    fit 30 30 ui/font # now all images from ui/font are fitted to 30x30 rect
+
 # Features
 
 You can declare few atlases in one file like this

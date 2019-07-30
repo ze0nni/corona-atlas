@@ -56,7 +56,8 @@ function Context(context) {
 		buildAtlas,
 		config: WithAtlas(config),
 		size: WithAtlas(NoAtlasPropertys(["width", "height"], size)),
-		put: WithAtlas(put)
+		put: WithAtlas(put),
+		fit: WithAtlas(fit)
 	}
 
 	async function out(outDir) {
@@ -135,6 +136,25 @@ function Context(context) {
 			progress()
 		}
 		currentAtlas.images = [...currentAtlas.images, ...newImages]
+	}
+
+	async function fit(widthStr, heightStr, prefix) {
+		const width = parseInt(widthStr)
+		const height = parseInt(heightStr)
+		if (0 == width || 0 == height || isNaN(width) || isNaN(height)) {
+			throw `wrong width or height: <${widthStr}> <$heightStr>`;
+		}
+
+		currentAtlas.images.forEach(image => {
+			if (image.name.startsWith(prefix)) {
+				const scale = Math.min(
+					width / image.width,
+					height / image.height,
+				)
+				image.width = Math.min(width, Math.ceil(image.width * scale))
+				image.height = Math.min(height, Math.ceil(image.height * scale))
+			}
+		})
 	}
 }
 
