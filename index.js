@@ -1,6 +1,6 @@
 const Cli = require('cli')
 const Fs = require('fs')
-const Path = require('path')
+const Path = require('path').posix
 
 const MaxRectsPacker = require("maxrects-packer").MaxRectsPacker
 
@@ -25,6 +25,7 @@ Cli.withStdinLines(async function(lines, newline) {
 function Context(context) {
 	let outputDirectory = "."
 	let currentRoot = "."
+	let currentScale = 1
 	let currentAtlas = null
 
 	function WithAtlas(cmd) {
@@ -50,19 +51,17 @@ function Context(context) {
 	return {
 		out,
 		root,
+		scale,
 		atlas,
 		buildAtlas,
 		config: WithAtlas(config),
 		size: WithAtlas(NoAtlasPropertys(["width", "height"], size)),
-		put: WithAtlas(put)
+		put: WithAtlas(put),
+		fit: WithAtlas(fit)
 	}
 
 	async function out(outDir) {
 		outputDirectory =  outDir
-	}
-	
-	async function root(rootPath) {
-		currentRoot = rootPath
 	}
 
 	async function atlas(name) {
@@ -109,11 +108,20 @@ function Context(context) {
 		currentAtlas.height = height
 	}
 
+	async function root(rootPath) {
+		currentRoot = rootPath
+	}
+
+	async function scale(value) {
+		currentScale = parseFloat(value)
+		if (0 == currentScale || isNaN(currentScale)) throw `incorrect scale ${value}`
+	}
+
 	async function put(dir) {
 		const newImages = []
 		for (let f of Fs.readdirSync(Path.join(currentRoot, dir)).filter(isImage)) {
 			const fullName = Path.join(currentRoot, dir, f)
-			const relativeName = Path.relative(currentRoot, fullName)
+			const relativeName = Path.normalize(Path.relative(currentRoot, fullName))
 			newImages.push({
 				name: relativeName,
 				path: fullName
@@ -123,11 +131,30 @@ function Context(context) {
 		const progress = cliProgress(context, newImages.length)
 		for (let image of newImages) {
 			const size = await getImageSize(context, image.path)
-			image.width = size.width
-			image.height = size.height
+			image.width = size.width * currentScale
+			image.height = size.height * currentScale
 			progress()
 		}
 		currentAtlas.images = [...currentAtlas.images, ...newImages]
+	}
+
+	async function fit(widthStr, heightStr, prefix) {
+		const width = parseInt(widthStr)
+		const height = parseInt(heightStr)
+		if (0 == width || 0 == height || isNaN(width) || isNaN(height)) {
+			throw `wrong width or height: <${widthStr}> <$heightStr>`;
+		}
+
+		currentAtlas.images.forEach(image => {
+			if (image.name.startsWith(prefix)) {
+				const scale = Math.min(
+					width / image.width,
+					height / image.height,
+				)
+				image.width = Math.min(width, Math.ceil(image.width * scale))
+				image.height = Math.min(height, Math.ceil(image.height * scale))
+			}
+		})
 	}
 }
 
